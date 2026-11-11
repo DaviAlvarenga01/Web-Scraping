@@ -1,10 +1,31 @@
 import requests
+from bs4 import BeautifulSoup
+
 
 def fetch_page():
-    url = " https://lista.mercadolivre.com.br/3d?matt_tool=28082595&matt_word=Default_URL_MLB&matt_source=google&matt_campaign_id=11615372280&matt_ad_group_id=112431201359&matt_match_type=p&matt_network=g&matt_device=c&matt_creative=479783060301&matt_keyword=3d%20mercado%20livre&matt_ad_position=&matt_ad_type=&matt_merchant_id=&matt_product_id=&matt_product_partition_id=&matt_target_id=aud-1969798378558:kwd-1028474129456&cq_src=google_ads&cq_cmp=11615372280&cq_net=g&cq_plt=gp&cq_med=&gad_source=1&gad_campaignid=11615372280&gclid=Cj0KCQiAwdDXBhDuARIsAFdLukn7p3vDiSmobGGWXqtA-wlVeIes_22TW5iYvjsrimnZDpAo2LXOLCwaAnUHEALw_wcB "
+    url = " https://www.mercadolivre.com.br/impressora-3d-flashforge-creator-5-com-4-bicos-multicolor-cinza/p/MLB80160087?pdp_filters=item_id%3AMLB5393031771#polycard_client=search-desktop&be_origin=searchv2&overlay_label=not_apply&search_layout=grid&position=3&type=product&tracking_id=04c8c691-cfa2-42cf-8ddf-8abddc542c27&overlay_label_capability=not_apply&wid=MLB5393031771&sid=search"
     response = requests.get(url)
     return response.text
+
+def parse_page(html_content):
+    soup = BeautifulSoup(html_content, "html.parser")
+    product_name = soup.find('h1', class_='ui-pdp-title').get_text()
+    old_price = soup.find('span', class_='price-tag-previous-value')
+    if old_price:
+        old_price = old_price.get_text()
+    else:
+        old_price = "No previous price available"
+    
+    price = soup.find_all('span', class_='price-tag-fraction').get_text()
+    print(f"Price: {price}")
+    print(f"Old Price: {old_price}")
+
+
+
+
 if __name__ == "__main__":
     content = fetch_page()
-    print(content)
-
+    products = parse_page(html_content=content)
+    
+    
+    
